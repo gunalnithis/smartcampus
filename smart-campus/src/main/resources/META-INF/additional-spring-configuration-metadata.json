@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT signing secret for application-issued tokens."
+    },
+    {
+      "name": "app.jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT expiration in milliseconds."
+    },
+    {
+      "name": "email.service.url",
+      "type": "java.lang.String",
+      "description": "Base URL of the external Nodemailer email service."
+    },
+    {
+      "name": "otp.expiry.time",
+      "type": "java.lang.Integer",
+      "description": "OTP expiry duration in minutes."
+    }
+  ]
+}
