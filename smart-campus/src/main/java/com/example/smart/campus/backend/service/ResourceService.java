@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.example.smart.campus.backend.dto.ResourceRequest;
 import com.example.smart.campus.backend.exception.ApiException;
 import com.example.smart.campus.backend.model.Resource;
-import com.example.smart.campus.backend.model.User;
 import com.example.smart.campus.backend.repository.ResourceRepository;
 import com.example.smart.campus.backend.repository.UserRepository;
 
@@ -44,36 +43,32 @@ public class ResourceService {
     }
 
     public Resource createResource(ResourceRequest request, String actingUserId) {
-        validateAdminRole(actingUserId);
+        validateActingUser(actingUserId);
         Resource resource = new Resource();
         mapResource(resource, request);
         return resourceRepository.save(resource);
     }
 
     public Resource updateResource(String id, ResourceRequest request, String actingUserId) {
-        validateAdminRole(actingUserId);
+        validateActingUser(actingUserId);
         Resource existing = getResourceById(id);
         mapResource(existing, request);
         return resourceRepository.save(existing);
     }
 
     public void deleteResource(String id, String actingUserId) {
-        validateAdminRole(actingUserId);
+        validateActingUser(actingUserId);
         Resource existing = getResourceById(id);
         resourceRepository.deleteById(existing.getId());
     }
 
-    private void validateAdminRole(String actingUserId) {
+    private void validateActingUser(String actingUserId) {
         if (actingUserId == null || actingUserId.isBlank()) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Admin user ID is required");
+            throw new ApiException(HttpStatus.FORBIDDEN, "User ID is required");
         }
 
-        User user = userRepository.findById(actingUserId)
-            .orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN, "Admin user not found"));
-
-        if (user.getRole() != User.Role.ADMIN) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Only admins can manage resources");
-        }
+        userRepository.findById(actingUserId)
+            .orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN, "User not found"));
     }
 
     private void mapResource(Resource target, ResourceRequest request) {

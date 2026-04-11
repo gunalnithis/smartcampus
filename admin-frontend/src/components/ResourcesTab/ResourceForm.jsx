@@ -3,6 +3,8 @@ import { BUILDING_OPTIONS } from "../../utils/constants";
 export function ResourceForm({
   form,
   onChange,
+  onImageChange,
+  onImageClear,
   onSubmit,
   onCancel,
   editing,
@@ -113,19 +115,33 @@ export function ResourceForm({
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1.5">
-            Image URL
+            Resource Image
           </label>
           <input
-            type="url"
-            name="imageUrl"
-            value={form.imageUrl || ""}
-            onChange={onChange}
-            placeholder="https://example.com/resource-image.jpg"
+            type="file"
+            accept="image/*"
+            onChange={onImageChange}
             className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
           />
           <p className="mt-1 text-xs text-slate-500">
-            Optional. This image is shown on frontend booking resource cards.
+            Optional. Choose an image file from your device.
           </p>
+          {form.imageUrl ? (
+            <div className="mt-3 flex items-center gap-3">
+              <img
+                src={form.imageUrl}
+                alt="Resource preview"
+                className="h-16 w-24 rounded-md border border-slate-200 object-cover"
+              />
+              <button
+                type="button"
+                onClick={onImageClear}
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition"
+              >
+                Remove Image
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
 

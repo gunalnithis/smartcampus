@@ -6,6 +6,14 @@ export const useDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [analytics, setAnalytics] = useState({
+    totalResources: 0,
+    totalBookings: 0,
+    activeResources: 0,
+    cancelledBookings: 0,
+    bookingsByBuilding: [],
+    peakBookingHours: [],
+  });
   const [adminUserId, setAdminUserId] = useState("");
   const [notificationUserId, setNotificationUserId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,11 +48,24 @@ export const useDashboard = () => {
         const usersData = await fetchJson("/api/auth/users");
         const bookingsData = await fetchJson("/api/bookings");
         const ticketsData = await fetchJson("/api/tickets");
+        const analyticsData = await fetchJson("/api/analytics/dashboard");
 
         const safeUsers = Array.isArray(usersData) ? usersData : [];
         setUsers(safeUsers);
         setBookings(Array.isArray(bookingsData) ? bookingsData : []);
         setTickets(Array.isArray(ticketsData) ? ticketsData : []);
+        setAnalytics({
+          totalResources: analyticsData?.totalResources ?? 0,
+          totalBookings: analyticsData?.totalBookings ?? 0,
+          activeResources: analyticsData?.activeResources ?? 0,
+          cancelledBookings: analyticsData?.cancelledBookings ?? 0,
+          bookingsByBuilding: Array.isArray(analyticsData?.bookingsByBuilding)
+            ? analyticsData.bookingsByBuilding
+            : [],
+          peakBookingHours: Array.isArray(analyticsData?.peakBookingHours)
+            ? analyticsData.peakBookingHours
+            : [],
+        });
 
         const resolvedAdminUserId = resolver(safeUsers);
         setAdminUserId(resolvedAdminUserId);
@@ -63,6 +84,7 @@ export const useDashboard = () => {
     bookings,
     tickets,
     notifications,
+    analytics,
     adminUserId,
     notificationUserId,
     loading,

@@ -14,7 +14,7 @@ export function Dashboard({ stats, loading, error }) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <StatCard
             key={stat.label}

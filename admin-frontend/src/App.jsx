@@ -89,6 +89,8 @@ function App() {
     resourceInfo,
     loadResources,
     handleResourceFieldChange,
+    handleResourceImageChange,
+    clearResourceImage,
     handleEditResource,
     handleDeleteResource,
     handleResourceSubmit,
@@ -100,6 +102,7 @@ function App() {
     bookings,
     tickets,
     notifications,
+    analytics,
     adminUserId,
     notificationUserId,
     loading,
@@ -113,13 +116,28 @@ function App() {
   // Computed values
   const stats = useMemo(
     () => [
-      { label: "Users", value: users.length, icon: "👥" },
-      { label: "Resources", value: resources.length, icon: "📦" },
-      { label: "Bookings", value: bookings.length, icon: "📅" },
-      { label: "Tickets", value: tickets.length, icon: "🎫" },
-      { label: "Notifications", value: notifications.length, icon: "🔔" },
+      {
+        label: "Total Resources",
+        value: analytics.totalResources,
+        icon: "📦",
+      },
+      {
+        label: "Total Bookings",
+        value: analytics.totalBookings,
+        icon: "📅",
+      },
+      {
+        label: "Active Resources",
+        value: analytics.activeResources,
+        icon: "✅",
+      },
+      {
+        label: "Cancelled Bookings",
+        value: analytics.cancelledBookings,
+        icon: "❌",
+      },
     ],
-    [users, resources, bookings, tickets, notifications],
+    [analytics],
   );
 
   const usersRows = users.map((user) => ({
@@ -271,7 +289,11 @@ function App() {
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 md:p-6 space-y-6 max-w-[1400px] w-full">
             {/* Dashboard Stats */}
-            <Dashboard stats={stats} loading={loading} error={error} />
+            <Dashboard
+              stats={stats}
+              loading={loading}
+              error={error}
+            />
 
             {/* Tab Content */}
             {activeTab === "users" && (
@@ -291,8 +313,11 @@ function App() {
             {activeTab === "resources" && (
               <ResourcesTab
                 resources={resources}
+                analytics={analytics}
                 form={resourceForm}
                 onChange={handleResourceFieldChange}
+                onImageChange={handleResourceImageChange}
+                onImageClear={clearResourceImage}
                 onSubmit={handleResourceSubmit}
                 onCancel={resetResourceForm}
                 editing={Boolean(editingResourceId)}
@@ -340,6 +365,8 @@ function App() {
                 <ResourceForm
                   form={resourceForm}
                   onChange={handleResourceFieldChange}
+                  onImageChange={handleResourceImageChange}
+                  onImageClear={clearResourceImage}
                   onSubmit={(e) => handleResourceSubmit(e, adminUserId)}
                   onCancel={resetResourceForm}
                   editing={Boolean(editingResourceId)}

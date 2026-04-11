@@ -26,6 +26,38 @@ export const useResources = () => {
     setResourceForm((previous) => ({ ...previous, [name]: value }));
   }, []);
 
+  const handleResourceImageChange = useCallback(async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setResourceInfo("Please select a valid image file.");
+      return;
+    }
+
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Failed to read selected image."));
+      reader.readAsDataURL(file);
+    });
+
+    setResourceForm((previous) => ({
+      ...previous,
+      imageUrl: dataUrl,
+    }));
+    setResourceInfo("Image selected successfully.");
+  }, []);
+
+  const clearResourceImage = useCallback(() => {
+    setResourceForm((previous) => ({
+      ...previous,
+      imageUrl: "",
+    }));
+  }, []);
+
   const resetResourceForm = useCallback(() => {
     setResourceForm(EMPTY_RESOURCE_FORM);
     setEditingResourceId("");
@@ -59,7 +91,7 @@ export const useResources = () => {
       setResourceInfo("");
       try {
         if (!adminUserId) {
-          throw new Error("No admin account selected.");
+          throw new Error("No user account selected.");
         }
 
         await deleteRequest(
@@ -91,7 +123,7 @@ export const useResources = () => {
 
       try {
         if (!adminUserId) {
-          throw new Error("No admin account selected.");
+          throw new Error("No user account selected.");
         }
 
         if (!resourceForm.name?.trim()) {
@@ -176,6 +208,8 @@ export const useResources = () => {
     resourceInfo,
     loadResources,
     handleResourceFieldChange,
+    handleResourceImageChange,
+    clearResourceImage,
     handleEditResource,
     handleDeleteResource,
     handleResourceSubmit,
